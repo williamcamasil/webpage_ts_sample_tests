@@ -88,6 +88,114 @@ npm test
 
 
 
+### Assertions
+
+Mais comum em métodos async.
+
+Significa que se espera que tenha expects, a quantidade é definida pelo der, ex.:
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import Button from "..";
+
+describe("<Button />", () => {
+    it('should render the button with the text "Calcular"', () => {
+        render(<Button textButton="Calcular" click={() => {}}/>);
+        
+       	//Nesse caso possui 1 assertions do button
+        expect.assertions(1);
+        
+        const button = screen.getByRole('button', { name: /Calcular/i });
+        expect(button).toBeInTheDocument();
+    })
+});
+```
+
+
+
+#### Button.tsx
+
+```tsx
+type Props = {
+    textButton: string;
+    click: Function;
+};
+
+const Button = ({ textButton, click }: Props) => {
+    return (
+        <button onClick={click()}>{textButton}</button>
+    );
+}
+
+export default Button;
+```
+
+
+
+### coverage
+
+Da mais detalhes sobre os testes, como executar:
+
+```
+yarn test -- --coverage
+```
+
+
+
+### [Outros exemplos de teste](https://www.youtube.com/watch?v=pbwXsjVEMqg)
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import Counter from ".";
+
+describe("Counter Component", () => {
+  //Teste para verificar se na tela o counter começa com 0
+  it("should start with title value 0", () => {
+    render(<Counter />);
+    
+    // quando da erro nem chega no expect
+    const counterTitle = screen.getByText("0");
+    // quando da erro o retorno é null, dessa forma não quebra
+    //const counterTitle = screen.queryByText("0");
+    // retorna uma promisse, ou seja não é apressado para retornar
+    //const counterTitle = screen.findByText("0");
+    
+    expect(counterTitle).toBeInTheDocument();
+  });
+  
+  //Teste para verificar se existe botão com texto incrementar
+  it("should have a increment button", () => {
+    render(<Counter />);
+    //alem do getByRole existe o getByAllRoles que pega todos os componentes do mesmo tipo, ex.: button
+    const buttonIncrement = screen.getByRole("button", {
+    	name: /incrementar/i,       
+    });
+  
+  	expect(buttonIncrement).toBeInTheDocument();
+  });
+
+	//Testando o EVENTO de clicar no botao e incrementar
+	it("should increment +1 when click increment button", () => {
+    render(<Counter />);
+    const buttonIncrement = screen.getByRole("button", {
+    	name: /incrementar/i,       
+    });
+  	
+		//O userEvent, permite vários eventos, nesse caso usamos o de click do botao para simular o incrementar esperando sair de 0 para ir para 1 
+		userEvent.click(buttonIncrement);
+  	expect(screen.getByText("1")).toBeInTheDocument();
+  });
+});
+```
+
+
+
+
+
+---
+
+
+
 Duvidas
 
 - Como conectar função ao test?
